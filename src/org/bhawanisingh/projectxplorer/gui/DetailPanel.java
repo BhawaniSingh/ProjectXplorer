@@ -6,6 +6,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.bhawanisingh.projectxplorer.api.util.Borders;
+
 public class DetailPanel extends JPanel {
 
 	private String language;

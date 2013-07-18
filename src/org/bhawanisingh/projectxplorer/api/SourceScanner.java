@@ -3,21 +3,29 @@ package org.bhawanisingh.projectxplorer.api;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bhawanisingh.projectxplorer.api.logging.LoggerValues;
 import org.bhawanisingh.projectxplorer.api.util.DetailObject;
 import org.bhawanisingh.projectxplorer.gui.MainGUI;
 
 public class SourceScanner {
 
+	private static Logger loggerSourceScanner = LogManager.getLogger(SourceScanner.class);
+
 	public static ArrayList<DetailObject> detailObjects;
 
 	public static void separateFolders(String folderList) {
+		loggerSourceScanner.entry();
 		String[] folders = folderList.split("\n");
 		for (String folder : folders) {
 			SourceScanner.sourceFolderDetails(folder);
 		}
+		loggerSourceScanner.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public static void sourceFolderDetails(String sourceFolder) {
+		loggerSourceScanner.entry();
 		File sourceFile;
 		File main = new File(sourceFolder);
 		if (main.isFile()) {
@@ -33,9 +41,11 @@ public class SourceScanner {
 				}
 			}
 		}
+		loggerSourceScanner.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private static void fileSelector(File sourceFile) {
+		loggerSourceScanner.entry();
 		String name = sourceFile.getName().substring(sourceFile.getName().lastIndexOf(".") + 1);
 		name = name.trim();
 		if ("java".equals(name)) {
@@ -57,9 +67,11 @@ public class SourceScanner {
 		} else if ("php".equals(name)) {
 			BasicDetails.phpDetails(sourceFile, SourceScanner.getDetailObject("PHP"));
 		}
+		loggerSourceScanner.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private static DetailObject getDetailObject(String language) {
+		loggerSourceScanner.entry();
 		boolean objectFound = false;
 		DetailObject detailObject = null;
 		for (DetailObject detailObject1 : SourceScanner.detailObjects) {
@@ -73,6 +85,7 @@ public class SourceScanner {
 			SourceScanner.detailObjects.add(detailObject);
 			MainGUI.getMAINGUI().addDetails(detailObject);
 		}
+		loggerSourceScanner.exit(LoggerValues.SUCCESSFUL_EXIT);
 		return detailObject;
 	}
 }

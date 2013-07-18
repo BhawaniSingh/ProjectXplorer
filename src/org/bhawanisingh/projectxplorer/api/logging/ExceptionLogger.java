@@ -1,6 +1,8 @@
 package org.bhawanisingh.projectxplorer.api.logging;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import javax.swing.UnsupportedLookAndFeelException;
@@ -24,27 +26,35 @@ public class ExceptionLogger {
 	}
 
 	public static void nullPointExceptionLogger(Logger logger, NullPointerException nullPointerException) {
-		ExceptionLogger.genericExceptionLogger(logger, nullPointerException);
+		genericExceptionLogger(logger, nullPointerException);
 	}
 
 	public static void unknownHostExceptionLogger(Logger logger, UnknownHostException unknownHostException) {
-		ExceptionLogger.genericExceptionLogger(logger, unknownHostException);
+		genericExceptionLogger(logger, unknownHostException);
 	}
 
 	public static void ioExceptionLogger(Logger logger, IOException ioException) {
-		ExceptionLogger.genericExceptionLogger(logger, ioException);
+		genericExceptionLogger(logger, ioException);
 	}
 
 	public static void instantiationExceptionLogger(Logger logger, InstantiationException instantiationException) {
-		ExceptionLogger.genericExceptionLogger(logger, instantiationException);
+		genericExceptionLogger(logger, instantiationException);
 	}
 
 	public static void illegalAccessExceptionLogger(Logger logger, IllegalAccessException illegalAccessException) {
-		ExceptionLogger.genericExceptionLogger(logger, illegalAccessException);
+		genericExceptionLogger(logger, illegalAccessException);
 	}
 
 	public static void unsupportedLookAndFeelExceptionLogger(Logger logger, UnsupportedLookAndFeelException unsupportedLookAndFeelException) {
-		ExceptionLogger.genericExceptionLogger(logger, unsupportedLookAndFeelException);
+		genericExceptionLogger(logger, unsupportedLookAndFeelException);
+	}
+
+	public static void uriSyntaxExceptionLogger(Logger logger, URISyntaxException uriSyntaxException) {
+		genericExceptionLogger(logger, uriSyntaxException);
+	}
+
+	public static void fileNotFoundExceptionLogger(Logger logger, FileNotFoundException fileNotFoundException) {
+		genericExceptionLogger(logger, fileNotFoundException);
 	}
 
 	private static void genericExceptionLogger(Logger logger, Throwable throwable) {
@@ -54,5 +64,4 @@ public class ExceptionLogger {
 				"Message\t => \t" + throwable.getMessage() + "\n\t" +
 				"Localized Message\t => \t" + throwable.getLocalizedMessage());
 	}
-
 }

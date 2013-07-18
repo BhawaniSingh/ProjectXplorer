@@ -1,4 +1,4 @@
-package org.bhawanisingh.projectxplorer.gui;
+package org.bhawanisingh.projectxplorer.api.util;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
@@ -13,6 +13,6 @@ public class Borders {
 	public static Border ETCHED_LOWERED = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 	public static Border COMPOUND_BEVEL_RAISED = BorderFactory.createCompoundBorder(Borders.BEVEL_RAISED, Borders.PADDING_BORDER);
 	public static Border COMPOUND_BEVEL_LOWERED = BorderFactory.createCompoundBorder(Borders.BEVEL_LOWERED, Borders.PADDING_BORDER);
-	public static Border COMPOUND_ETCHED_BORDER = BorderFactory.createCompoundBorder(Borders.ETCHED_RAISED, Borders.PADDING_BORDER);
+	public static Border COMPOUND_ETCHED_RAISED = BorderFactory.createCompoundBorder(Borders.ETCHED_RAISED, Borders.PADDING_BORDER);
 	public static Border COMPOUND_ETCHED_LOWERED = BorderFactory.createCompoundBorder(Borders.ETCHED_LOWERED, Borders.PADDING_BORDER);
 }
