@@ -16,13 +16,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bhawanisingh.projectxplorer.api.MainThread;
-import org.bhawanisingh.projectxplorer.api.ProjectDetails;
+import org.bhawanisingh.projectxplorer.api.SourceScanner;
 import org.bhawanisingh.projectxplorer.api.help.AboutProject;
+import org.bhawanisingh.projectxplorer.api.logging.ExceptionLogger;
+import org.bhawanisingh.projectxplorer.api.logging.LoggerValues;
 import org.bhawanisingh.projectxplorer.api.util.DetailObject;
+import org.bhawanisingh.projectxplorer.gui.DetailPanel;
+import org.bhawanisingh.projectxplorer.gui.Layout;
 
 public class MainGUI extends JFrame {
 
+	private Logger loggerMainClass = LogManager.getLogger(MainGUI.class.getClass());
 	private JPanel mainPanel;
 	private JScrollPane sourceScrollPane;
 	private JButton browseButton;
@@ -39,6 +46,8 @@ public class MainGUI extends JFrame {
 
 	public MainGUI() {
 		super(AboutProject.PROGRAM_NAME + " " + AboutProject.PROGRAM_VERSION);
+		this.loggerMainClass.entry();
+		System.err.println(this.loggerMainClass);
 		MainGUI.MAIN_GUI = this;
 		this.initialize();
 		this.addComponents();
@@ -49,9 +58,11 @@ public class MainGUI extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.pack();
 		this.setVisible(true);
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private void initialize() {
+		this.loggerMainClass.entry();
 		this.mainPanel = new JPanel(new GridBagLayout());
 		this.sourceTextArea = new JTextArea(4, 40);
 		this.browseButton = new JButton("Browse");
@@ -63,9 +74,11 @@ public class MainGUI extends JFrame {
 		this.submitButtonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 		this.submitButton = new JButton("Submit");
 		this.sourceTextArea.setText("/home/Mount/Development/workspaces/eclipse_workspace");
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private void addComponents() {
+		this.loggerMainClass.entry();
 		this.submitButtonPanel.add(this.submitButton);
 		Layout.add(this.detailBasePanel, this.detailPanels.get(0), 0, ++MainGUI.yPosition, 1, 1, 100, 0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL);
 		Layout.add(this.mainPanel, this.sourceScrollPane, 0, 0, 4, 1, 100, 5, GridBagConstraints.EAST, GridBagConstraints.BOTH);
@@ -74,17 +87,15 @@ public class MainGUI extends JFrame {
 		Layout.add(this.mainPanel, this.submitButtonPanel, 0, 6, 5, 1, 100, 0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL);
 
 		this.add(this.mainPanel);
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private void addListeners() {
+		this.loggerMainClass.entry();
 		this.browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					MainGUI.this.browseButtonAction();
-				} catch (IOException ioException) {
-					ioException.printStackTrace();
-				}
+				MainGUI.this.browseButtonAction();
 			}
 		});
 		this.submitButton.addActionListener(new ActionListener() {
@@ -93,29 +104,42 @@ public class MainGUI extends JFrame {
 				MainGUI.this.submitAction();
 			}
 		});
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private void theming() {
+		this.loggerMainClass.entry();
 		this.detailScrollPane.getViewport().setBorder(null);
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
-	private void browseButtonAction() throws IOException {
+	private void browseButtonAction() {
+		this.loggerMainClass.entry();
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.setDialogTitle("Select The Source Directory");
 		if (fileChooser.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION) {
-			this.sourceTextArea.insert(fileChooser.getSelectedFile().getCanonicalPath() + "\n", this.sourceTextArea.getText().length());
+			try {
+				this.sourceTextArea.insert(fileChooser.getSelectedFile().getCanonicalPath() + "\n", this.sourceTextArea.getText().length());
+				this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
+			} catch (IOException ioException) {
+				this.loggerMainClass.exit(LoggerValues.UNSUCCESSFUL_EXIT);
+				ExceptionLogger.ioExceptionLogger(this.loggerMainClass, ioException);
+			}
 		}
 	}
 
 	private void submitAction() {
+		this.loggerMainClass.entry();
 		MainThread mainRunnable = new MainThread(this.sourceTextArea.getText());
 		this.mainThread = new Thread(mainRunnable);
 		this.mainThread.start();
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public void addDetails(DetailObject detailObject) {
+		this.loggerMainClass.entry();
 		DetailPanel detailPanel = new DetailPanel(detailObject.getLanguage());
 		this.detailPanels.add(detailPanel);
 		detailPanel.setBlankLinesLabel(detailObject.getBlankLines());
@@ -123,10 +147,11 @@ public class MainGUI extends JFrame {
 		detailPanel.setCommentsLabel(detailObject.getCommentLines());
 		detailPanel.setNumberOfFilesLabel(detailObject.getNumberOfFiles());
 		Layout.add(this.detailBasePanel, detailPanel, 0, ++MainGUI.yPosition, 1, 1, 100, 0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL);
-
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public void updateDetails(DetailObject detailObject) {
+		this.loggerMainClass.entry();
 		for (DetailPanel detailPanel : this.detailPanels) {
 			if (detailPanel.getLanguage().equalsIgnoreCase(detailObject.getLanguage())) {
 				detailPanel.setBlankLinesLabel(detailObject.getBlankLines());
@@ -139,7 +164,6 @@ public class MainGUI extends JFrame {
 				float percentage = ((float) codelines / (float) totallines) * 100.0f;
 				detailPanel.setCodeShareLabel(percentage);
 				break;
-
 			}
 		}
 		this.detailPanels.get(0).setBlankLinesLabel(DetailObject.getTOTAL_BLANK_LINES());
@@ -147,10 +171,11 @@ public class MainGUI extends JFrame {
 		this.detailPanels.get(0).setCommentsLabel(DetailObject.getTOTAL_COMMENT_LINES());
 		this.detailPanels.get(0).setNumberOfFilesLabel(DetailObject.getTOTAL_NUMBER_OF_FILES());
 		this.detailPanels.get(0).setTotalLinesLabel(DetailObject.getTOTAL_BLANK_LINES() + DetailObject.getTOTAL_COMMENT_LINES() + DetailObject.getTOTAL_LINES_OF_CODE());
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public void lastUpdateDetail() {
-
+		this.loggerMainClass.entry();
 		long BLANK_LINES = DetailObject.getTOTAL_BLANK_LINES();
 		long CODE_LINES = DetailObject.getTOTAL_LINES_OF_CODE();
 		long COMMENT_LINES = DetailObject.getTOTAL_COMMENT_LINES();
@@ -170,10 +195,10 @@ public class MainGUI extends JFrame {
 		float codeShare;
 
 		for (int i = 1; i < this.detailPanels.size(); ++i) {
-			blankLines = ProjectDetails.detailObjects.get(i - 1).getBlankLines();
-			codeLines = ProjectDetails.detailObjects.get(i - 1).getLineOfCode();
-			commentLines = ProjectDetails.detailObjects.get(i - 1).getCommentLines();
-			numberOfFiles = ProjectDetails.detailObjects.get(i - 1).getNumberOfFiles();
+			blankLines = SourceScanner.detailObjects.get(i - 1).getBlankLines();
+			codeLines = SourceScanner.detailObjects.get(i - 1).getLineOfCode();
+			commentLines = SourceScanner.detailObjects.get(i - 1).getCommentLines();
+			numberOfFiles = SourceScanner.detailObjects.get(i - 1).getNumberOfFiles();
 			totalLines = blankLines + codeLines + commentLines;
 			codeShare = ((float) totalLines / (float) TOTAL_LINES) * 100.0f;
 			this.detailPanels.get(i).setBlankLinesLabel(blankLines);
@@ -183,9 +208,11 @@ public class MainGUI extends JFrame {
 			this.detailPanels.get(i).setTotalLinesLabel(totalLines);
 			this.detailPanels.get(i).setCodeShareLabel(codeShare);
 		}
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public void reset() {
+		this.loggerMainClass.entry();
 		if (this.detailPanels.size() > 1) {
 			for (int i = 1; i < this.detailPanels.size(); ++i) {
 				this.detailBasePanel.remove(this.detailPanels.get(i));
@@ -194,6 +221,7 @@ public class MainGUI extends JFrame {
 		DetailPanel detailPanel = this.detailPanels.get(0);
 		this.detailPanels.removeAll(this.detailPanels);
 		this.detailPanels.add(detailPanel);
+		this.loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public static MainGUI getMAINGUI() {

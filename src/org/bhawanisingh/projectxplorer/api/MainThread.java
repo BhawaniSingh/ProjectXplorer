@@ -17,8 +17,8 @@ public class MainThread implements Runnable {
 	public void run() {
 		MainGUI.getMAINGUI().reset();
 		DetailObject.reset();
-		ProjectDetails.detailObjects = new ArrayList<DetailObject>();
-		ProjectDetails.separateFolders(this.sourceFolders);
+		SourceScanner.detailObjects = new ArrayList<DetailObject>();
+		SourceScanner.separateFolders(this.sourceFolders);
 		MainGUI.getMAINGUI().lastUpdateDetail();
 	}
 
