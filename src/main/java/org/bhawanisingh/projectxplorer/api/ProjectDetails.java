@@ -8,7 +8,7 @@ import org.bhawanisingh.projectxplorer.gui.MainGUI;
 
 public class ProjectDetails {
 
-	public static ArrayList<DetailObject> detailObjects = new ArrayList<DetailObject>();
+	public static ArrayList<DetailObject> detailObjects;
 
 	public static void separateFolders(String folderList) {
 		String[] folders = folderList.split("\n");
@@ -27,9 +27,23 @@ public class ProjectDetails {
 				String name = tempFile.getName().substring(tempFile.getName().lastIndexOf(".") + 1);
 				name = name.trim();
 				if ("java".equals(name)) {
-					BasicDetails.javaDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "java"));
+					BasicDetails.javaDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "Java"));
+				} else if ("c".equalsIgnoreCase(name) || "cpp".equalsIgnoreCase(name)) {
+					BasicDetails.cppDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "C/C++"));
+				} else if ("cs".equals(name)) {
+					BasicDetails.cSharpDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "C Sharp"));
 				} else if ("py".equals(name)) {
-					BasicDetails.pythonDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "py"));
+					BasicDetails.pythonDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "Python"));
+				} else if ("vb".equals(name)) {
+					BasicDetails.visualBasicDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "Visual Basic"));
+				} else if ("xml".equals(name)) {
+					BasicDetails.xmlDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "XML"));
+				} else if ("htm".equals(name) || "html".equals(name)) {
+					BasicDetails.xmlDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "HTML"));
+				} else if ("jsp".equals(name)) {
+					BasicDetails.xmlDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "JSP"));
+				} else if ("php".equals(name)) {
+					BasicDetails.phpDetails(tempFile, ProjectDetails.getDetailObject(tempFile, "PHP"));
 				}
 			} else {
 				ProjectDetails.sourceFolderDetails(tempFile.getAbsolutePath());

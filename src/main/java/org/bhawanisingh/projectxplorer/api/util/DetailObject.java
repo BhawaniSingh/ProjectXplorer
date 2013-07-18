@@ -2,10 +2,10 @@ package org.bhawanisingh.projectxplorer.api.util;
 
 public class DetailObject {
 
-	private static long TOTAL_LINES_OF_CODE = 0;
-	private static long TOTAL_BLANK_LINES = 0;
-	private static long TOTAL_COMMENT_LINES = 0;
-	private static long TOTAL_NUMBER_OF_FILES = 0;
+	private static long TOTAL_LINES_OF_CODE;
+	private static long TOTAL_BLANK_LINES;
+	private static long TOTAL_COMMENT_LINES;
+	private static long TOTAL_NUMBER_OF_FILES;
 
 	private String language;
 	private long numberOfFiles;
@@ -86,6 +86,13 @@ public class DetailObject {
 
 	public void updateCommentLines() {
 		++this.commentLines;
+	}
+
+	public static void reset() {
+		DetailObject.TOTAL_BLANK_LINES = 0;
+		DetailObject.TOTAL_COMMENT_LINES = 0;
+		DetailObject.TOTAL_LINES_OF_CODE = 0;
+		DetailObject.TOTAL_NUMBER_OF_FILES = 0;
 	}
 
 }
