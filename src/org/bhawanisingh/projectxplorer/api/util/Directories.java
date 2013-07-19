@@ -4,13 +4,6 @@ import java.io.File;
 
 public class Directories {
 
-	public static final String[] AVAILABLE_FILETYPES = { "java", "cs", "c", "i", "ii",
-			"m", "mi", "mii", "M", "mm",
-			"h", "cc", "cp", "cxx", "cpp",
-			"CPP", "c++", "C", "hh", "H",
-			"hp", "hxx", "hpp", "HPP", "h++", "tcc",
-			"py", "js" };
-
 	public static String APP_HOME = System.getProperty("user.home") + "/.ProjectXplorer";
 	public static String LOGS_DIR = Directories.APP_HOME + "/logs";
 

@@ -9,7 +9,6 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bhawanisingh.projectxplorer.api.logging.ExceptionLogger;
-import org.bhawanisingh.projectxplorer.api.logging.LoggerValues;
 import org.bhawanisingh.projectxplorer.api.util.DetailObject;
 import org.bhawanisingh.projectxplorer.gui.MainGUI;
 
@@ -21,6 +20,10 @@ public class BasicDetails {
 	}
 
 	public static void cSharpDetails(File fileName, DetailObject detailObject) {
+		BasicDetails.javaDetails(fileName, detailObject);
+	}
+
+	public static void jsDetails(File fileName, DetailObject detailObject) {
 		BasicDetails.javaDetails(fileName, detailObject);
 	}
 
@@ -41,7 +44,6 @@ public class BasicDetails {
 	}
 
 	public static void javaDetails(File fileName, DetailObject detailObject) {
-		loggerBasicDetails.entry();
 		detailObject.updateNumberOfFiles();
 		DetailObject.updateTOTAL_NUMBER_OF_FILES();
 		try {
@@ -71,19 +73,15 @@ public class BasicDetails {
 				}
 			}
 			bufferedReader.close();
-			loggerBasicDetails.exit(LoggerValues.SUCCESSFUL_EXIT);
 		} catch (FileNotFoundException fileNotFoundException) {
 			ExceptionLogger.fileNotFoundExceptionLogger(loggerBasicDetails, fileNotFoundException);
-			loggerBasicDetails.exit(LoggerValues.UNSUCCESSFUL_EXIT);
 		} catch (IOException ioException) {
 			ExceptionLogger.ioExceptionLogger(loggerBasicDetails, ioException);
-			loggerBasicDetails.exit(LoggerValues.UNSUCCESSFUL_EXIT);
 		}
 		MainGUI.getMAINGUI().updateDetails(detailObject);
 	}
 
 	public static void jspStyleComments(File fileName, DetailObject detailObject, String startComment, String endComment) {
-		loggerBasicDetails.entry();
 		detailObject.updateNumberOfFiles();
 		DetailObject.updateTOTAL_NUMBER_OF_FILES();
 		try {
@@ -121,18 +119,15 @@ public class BasicDetails {
 				}
 			}
 			bufferedReader.close();
-			loggerBasicDetails.exit(LoggerValues.SUCCESSFUL_EXIT);
 		} catch (FileNotFoundException fileNotFoundException) {
 			ExceptionLogger.fileNotFoundExceptionLogger(loggerBasicDetails, fileNotFoundException);
 		} catch (IOException ioException) {
 			ExceptionLogger.ioExceptionLogger(loggerBasicDetails, ioException);
-			loggerBasicDetails.exit(LoggerValues.UNSUCCESSFUL_EXIT);
 		}
 		MainGUI.getMAINGUI().updateDetails(detailObject);
 	}
 
 	public static void singleLineComments(File fileName, DetailObject detailObject, String comment) {
-		loggerBasicDetails.entry();
 		detailObject.updateNumberOfFiles();
 		DetailObject.updateTOTAL_NUMBER_OF_FILES();
 		try {
@@ -151,19 +146,15 @@ public class BasicDetails {
 				}
 			}
 			bufferedReader.close();
-			loggerBasicDetails.exit(LoggerValues.SUCCESSFUL_EXIT);
 		} catch (FileNotFoundException fileNotFoundException) {
 			ExceptionLogger.fileNotFoundExceptionLogger(loggerBasicDetails, fileNotFoundException);
-			loggerBasicDetails.exit(LoggerValues.UNSUCCESSFUL_EXIT);
 		} catch (IOException ioException) {
 			ExceptionLogger.ioExceptionLogger(loggerBasicDetails, ioException);
-			loggerBasicDetails.exit(LoggerValues.UNSUCCESSFUL_EXIT);
 		}
 		MainGUI.getMAINGUI().updateDetails(detailObject);
 	}
 
 	public static void phpDetails(File fileName, DetailObject detailObject) {
-		loggerBasicDetails.entry();
 		detailObject.updateNumberOfFiles();
 		DetailObject.updateTOTAL_NUMBER_OF_FILES();
 		try {
@@ -202,13 +193,42 @@ public class BasicDetails {
 				}
 			}
 			bufferedReader.close();
-			loggerBasicDetails.exit(LoggerValues.SUCCESSFUL_EXIT);
 		} catch (FileNotFoundException fileNotFoundException) {
 			ExceptionLogger.fileNotFoundExceptionLogger(loggerBasicDetails, fileNotFoundException);
-			loggerBasicDetails.exit(LoggerValues.UNSUCCESSFUL_EXIT);
 		} catch (IOException ioException) {
 			ExceptionLogger.ioExceptionLogger(loggerBasicDetails, ioException);
-			loggerBasicDetails.exit(LoggerValues.UNSUCCESSFUL_EXIT);
+		}
+		MainGUI.getMAINGUI().updateDetails(detailObject);
+	}
+
+	public static void cssDetails(File fileName, DetailObject detailObject) {
+		detailObject.updateNumberOfFiles();
+		DetailObject.updateTOTAL_NUMBER_OF_FILES();
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				if (line.trim().startsWith("/*")) {
+					DetailObject.updateTOTAL_COMMENT_LINES();
+					detailObject.updateCommentLines();
+					while (line != null) {
+						if (line.trim().contains("*/")) {
+							break;
+						}
+						DetailObject.updateTOTAL_COMMENT_LINES();
+						detailObject.updateCommentLines();
+						line = bufferedReader.readLine();
+					}
+				} else {
+					DetailObject.updateTOTAL_LINES_OF_CODE();
+					detailObject.updateLineOfCode();
+				}
+			}
+			bufferedReader.close();
+		} catch (FileNotFoundException fileNotFoundException) {
+			ExceptionLogger.fileNotFoundExceptionLogger(loggerBasicDetails, fileNotFoundException);
+		} catch (IOException ioException) {
+			ExceptionLogger.ioExceptionLogger(loggerBasicDetails, ioException);
 		}
 		MainGUI.getMAINGUI().updateDetails(detailObject);
 	}

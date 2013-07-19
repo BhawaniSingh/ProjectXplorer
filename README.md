@@ -15,6 +15,9 @@ Languages supported :
 7. PHP
 8. Visual Basic
 9. Python
+10. JSP
+11. JavaScript
+12. CSS
 
 
 All the supported languages are working fine now.

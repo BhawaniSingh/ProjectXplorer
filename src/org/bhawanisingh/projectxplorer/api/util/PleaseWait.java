@@ -1,4 +1,4 @@
-package org.bhawanisingh.projectxplorer.gui;
+package org.bhawanisingh.projectxplorer.api.util;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -9,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -27,7 +29,7 @@ import javax.swing.JLabel;
 public class PleaseWait extends JComponent implements Runnable, MouseListener, KeyListener, FocusListener {
 
 	private static final long serialVersionUID = -3781071463506069338L;
-	private static Paint gradient = new GradientPaint(10f, 0f, Color.BLACK, 21f, 0f, Color.DARK_GRAY);
+	private static Paint gradient = new GradientPaint(10f, 0f, Color.DARK_GRAY, 21f, 0f, Color.BLACK);
 	private Area[] tickerOuter = null;
 	private Area[] tickerInner = null;
 	private boolean cont;
@@ -35,45 +37,57 @@ public class PleaseWait extends JComponent implements Runnable, MouseListener, K
 	private JLabel focus;
 
 	public PleaseWait() {
-		this.focus = new JLabel();
-		this.focus.setOpaque(false);
-		this.add(this.focus);
+		focus = new JLabel();
+		focus.setOpaque(false);
+		this.add(focus);
+		addListeners();
+	}
+
+	private void addListeners() {
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				tickerOuter = buildTicker(true);
+				tickerInner = buildTicker(false);
+			}
+
+		});
 	}
 
 	public void stop() {
-		this.cont = false;
-		this.removeKeyListener(this);
-		this.removeMouseListener(this);
-		this.removeFocusListener(this);
-		this.setVisible(false);
+		cont = false;
+		removeKeyListener(this);
+		removeMouseListener(this);
+		removeFocusListener(this);
+		setVisible(false);
 	}
 
 	public void start() {
-		this.cont = true;
-		this.addKeyListener(this);
-		this.addMouseListener(this);
-		this.addFocusListener(this);
-		this.focus.requestFocusInWindow();
-		this.tickerOuter = this.buildTicker(true);
-		this.tickerInner = this.buildTicker(false);
-		this.setVisible(true);
-		this.waitThread = new Thread(this);
-		this.waitThread.start();
+		cont = true;
+		addKeyListener(this);
+		addMouseListener(this);
+		addFocusListener(this);
+		focus.requestFocusInWindow();
+		tickerOuter = buildTicker(true);
+		tickerInner = buildTicker(false);
+		setVisible(true);
+		waitThread = new Thread(this);
+		waitThread.start();
 	}
 
 	@Override
 	public void run() {
-		while (this.cont) {
+		while (cont) {
 			try {
 				Thread.sleep(100);
-				this.rotateTicker();
+				rotateTicker();
 				this.repaint();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			synchronized (this) {
-				if (!this.isShowing()) {
-					this.cont = false;
+				if (!isShowing()) {
+					cont = false;
 				}
 			}
 		}
@@ -82,7 +96,7 @@ public class PleaseWait extends JComponent implements Runnable, MouseListener, K
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		this.paintComponents(g);
+		paintComponents(g);
 		g.dispose();
 	}
 
@@ -97,14 +111,14 @@ public class PleaseWait extends JComponent implements Runnable, MouseListener, K
 		graphics.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
 		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-		graphics.setFont(new Font(this.getFont().getName(), Font.ITALIC, 50));
+		graphics.setFont(new Font(getFont().getName(), Font.ITALIC, 50));
 		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
 		graphics.setPaint(PleaseWait.gradient);
 
 		for (int i = 0; i < 11; i++) {
 			graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, i * 0.1f));
-			graphics.fill(this.tickerOuter[i]);
-			graphics.fill(this.tickerInner[i]);
+			graphics.fill(tickerOuter[i]);
+			graphics.fill(tickerInner[i]);
 
 		}
 		Toolkit.getDefaultToolkit().sync();
@@ -113,14 +127,14 @@ public class PleaseWait extends JComponent implements Runnable, MouseListener, K
 
 	private void rotateTicker() {
 		int barsCount = 11;
-		Area tempOuter = this.tickerOuter[0];
-		Area tempInner = this.tickerInner[barsCount - 1];
-		for (int i = 0; i < (barsCount - 1); ++i) {
-			this.tickerOuter[i] = this.tickerOuter[i + 1];
-			this.tickerInner[barsCount - (i + 1)] = this.tickerInner[barsCount - (i + 2)];
+		Area tempOuter = tickerOuter[0];
+		Area tempInner = tickerInner[barsCount - 1];
+		for (int i = 0; i < barsCount - 1; ++i) {
+			tickerOuter[i] = tickerOuter[i + 1];
+			tickerInner[barsCount - (i + 1)] = tickerInner[barsCount - (i + 2)];
 		}
-		this.tickerOuter[barsCount - 1] = tempOuter;
-		this.tickerInner[0] = tempInner;
+		tickerOuter[barsCount - 1] = tempOuter;
+		tickerInner[0] = tempInner;
 
 	}
 
@@ -130,11 +144,11 @@ public class PleaseWait extends JComponent implements Runnable, MouseListener, K
 		AffineTransform toBorder;
 		AffineTransform toCircle;
 		Area[] ticker = new Area[barsCount];
-		Point2D.Double center = new Point2D.Double((double) this.getWidth() / 2, (double) this.getHeight() / 2);
-		double fixedAngle = (2.0 * Math.PI) / (barsCount);
+		Point2D.Double center = new Point2D.Double((double) getWidth() / 2, (double) getHeight() / 2);
+		double fixedAngle = 2.0 * Math.PI / barsCount;
 
 		for (double i = 0.0; i < barsCount; i++) {
-			Area primitive = this.buildPrimitive(outer);
+			Area primitive = buildPrimitive(outer);
 			toCenter = AffineTransform.getTranslateInstance(center.getX(), center.getY());
 			if (outer) {
 				toBorder = AffineTransform.getTranslateInstance(60, 20.0);
@@ -216,14 +230,14 @@ public class PleaseWait extends JComponent implements Runnable, MouseListener, K
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		if (this.isVisible()) {
-			this.focus.requestFocusInWindow();
+		if (isVisible()) {
+			focus.requestFocusInWindow();
 		}
 
 	}
 
 	public Thread getWaitThread() {
-		return this.waitThread;
+		return waitThread;
 	}
 
 }

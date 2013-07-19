@@ -5,15 +5,20 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,10 +31,18 @@ import org.bhawanisingh.projectxplorer.api.logging.ExceptionLogger;
 import org.bhawanisingh.projectxplorer.api.logging.LoggerValues;
 import org.bhawanisingh.projectxplorer.api.util.Borders;
 import org.bhawanisingh.projectxplorer.api.util.DetailObject;
+import org.bhawanisingh.projectxplorer.api.util.PleaseWait;
 
 public class MainGUI extends JFrame {
 
 	private Logger loggerMainClass = LogManager.getLogger(MainGUI.class.getClass());
+
+	private JMenuBar menuBar;
+	private JMenu fileMenu;
+	private JMenu helpMenu;
+	private JMenuItem exitMenuItem;
+	private JMenuItem aboutMenuItem;
+
 	private JPanel mainPanel;
 	private JScrollPane sourceScrollPane;
 	private JButton browseButton;
@@ -43,6 +56,7 @@ public class MainGUI extends JFrame {
 	private static MainGUI MAIN_GUI;
 	private static int yPosition = -1;
 	private Thread mainThread;
+	private PleaseWait pleaseWait;
 
 	public MainGUI() {
 		super(AboutProject.PROGRAM_NAME + " " + AboutProject.PROGRAM_VERSION);
@@ -57,12 +71,19 @@ public class MainGUI extends JFrame {
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
-		new AboutDialog(this);
 		loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private void initialize() {
 		loggerMainClass.entry();
+
+		menuBar = new JMenuBar();
+		fileMenu = new JMenu("File");
+		helpMenu = new JMenu("Help");
+		exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_F4);
+		exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+		aboutMenuItem = new JMenuItem("About", KeyEvent.VK_A);
+		aboutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
 		mainPanel = new JPanel(new GridBagLayout());
 		sourceTextArea = new JTextArea(4, 40);
 		browseButton = new JButton("Browse");
@@ -74,11 +95,19 @@ public class MainGUI extends JFrame {
 		submitButtonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 		submitButton = new JButton("Submit");
 		sourceTextArea.setText("/home/Mount/Development/workspaces/eclipse_workspace");
+		pleaseWait = new PleaseWait();
 		loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private void addComponents() {
 		loggerMainClass.entry();
+
+		fileMenu.add(exitMenuItem);
+		helpMenu.add(aboutMenuItem);
+		menuBar.add(fileMenu);
+		menuBar.add(helpMenu);
+		setJMenuBar(menuBar);
+
 		submitButtonPanel.add(submitButton);
 		Layout.add(detailBasePanel, detailPanels.get(0), 0, ++MainGUI.yPosition, 1, 1, 100, 0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL);
 		Layout.add(mainPanel, sourceScrollPane, 0, 0, 4, 1, 100, 5, GridBagConstraints.EAST, GridBagConstraints.BOTH);
@@ -87,17 +116,35 @@ public class MainGUI extends JFrame {
 		Layout.add(mainPanel, submitButtonPanel, 0, 6, 5, 1, 100, 0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL);
 
 		this.add(mainPanel);
+		setGlassPane(pleaseWait);
 		loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	private void addListeners() {
 		loggerMainClass.entry();
+
+		exitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+
+			}
+		});
+
+		aboutMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new AboutDialog(MainGUI.this);
+			}
+		});
+
 		browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				MainGUI.this.browseButtonAction();
 			}
 		});
+
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -153,7 +200,6 @@ public class MainGUI extends JFrame {
 	}
 
 	public void updateDetails(DetailObject detailObject) {
-		loggerMainClass.entry();
 		for (DetailPanel detailPanel : detailPanels) {
 			if (detailPanel.getLanguage().equalsIgnoreCase(detailObject.getLanguage())) {
 				detailPanel.setBlankLinesLabel(detailObject.getBlankLines());
@@ -173,7 +219,6 @@ public class MainGUI extends JFrame {
 		detailPanels.get(0).setCommentsLabel(DetailObject.getTOTAL_COMMENT_LINES());
 		detailPanels.get(0).setNumberOfFilesLabel(DetailObject.getTOTAL_NUMBER_OF_FILES());
 		detailPanels.get(0).setTotalLinesLabel(DetailObject.getTOTAL_BLANK_LINES() + DetailObject.getTOTAL_COMMENT_LINES() + DetailObject.getTOTAL_LINES_OF_CODE());
-		loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public void lastUpdateDetail() {
@@ -228,5 +273,9 @@ public class MainGUI extends JFrame {
 
 	public static MainGUI getMAINGUI() {
 		return MainGUI.MAIN_GUI;
+	}
+
+	public PleaseWait getPleaseWait() {
+		return pleaseWait;
 	}
 }
