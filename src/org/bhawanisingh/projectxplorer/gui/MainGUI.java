@@ -188,7 +188,6 @@ public class MainGUI extends JFrame {
 	}
 
 	public void addDetails(DetailObject detailObject) {
-		loggerMainClass.entry();
 		DetailPanel detailPanel = new DetailPanel(detailObject.getLanguage());
 		detailPanels.add(detailPanel);
 		detailPanel.setBlankLinesLabel(detailObject.getBlankLines());
@@ -196,7 +195,6 @@ public class MainGUI extends JFrame {
 		detailPanel.setCommentsLabel(detailObject.getCommentLines());
 		detailPanel.setNumberOfFilesLabel(detailObject.getNumberOfFiles());
 		Layout.add(detailBasePanel, detailPanel, 0, ++MainGUI.yPosition, 1, 1, 100, 0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL);
-		loggerMainClass.exit(LoggerValues.SUCCESSFUL_EXIT);
 	}
 
 	public void updateDetails(DetailObject detailObject) {
